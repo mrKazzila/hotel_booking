@@ -27,8 +27,11 @@ class Settings(BaseSettings):
 
     @field_validator('DB_PORT')
     def __validate_port(cls, v: int) -> int:
-        if not 1 <= v <= 65_535:
-            raise ValueError("Port must be between 1 and 65535")
+        MIN_PORT_NUMBER: int = 1
+        MAX_PORT_NUMBER: int = 65_535
+
+        if not MIN_PORT_NUMBER <= v <= MAX_PORT_NUMBER:
+            raise ValueError(f"Port must be between {MIN_PORT_NUMBER} and {MAX_PORT_NUMBER}")
         return v
 
     @field_validator('DB_SCHEME')
