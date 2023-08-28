@@ -1,15 +1,14 @@
 from functools import lru_cache
-from ipaddress import IPv4Address
 from pathlib import Path
 from sys import exit
 
-from pydantic import AnyUrl, PostgresDsn, field_validator, UrlConstraints
+from pydantic import PostgresDsn, field_validator, UrlConstraints, ValidationError
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
     DB_SCHEME: str
-    DB_HOST: IPv4Address | AnyUrl
+    DB_HOST: str
     DB_PORT: int
     DB_USER: str
     DB_PASS: str
@@ -52,5 +51,5 @@ def get_settings() -> Settings:
     try:
         settings = Settings()
         return settings
-    except Exception as e:
+    except ValidationError as e:
         exit(e)
