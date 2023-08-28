@@ -1,6 +1,7 @@
 from functools import lru_cache
 from ipaddress import IPv4Address
 from pathlib import Path
+from sys import exit
 
 from pydantic import AnyUrl, PostgresDsn, field_validator, UrlConstraints
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -14,21 +15,6 @@ class Settings(BaseSettings):
     DB_PASS: str
     DB_NAME: str
 
-    @field_validator('DB_PORT')
-    def validate_port(cls, v: int) -> int:
-        if not 1 <= v <= 65_535:
-            raise ValueError("Port must be between 1 and 65535")
-        return v
-
-    @field_validator('DB_SCHEME')
-    def validate_pg_scheme(cls, v: int) -> UrlConstraints.allowed_schemes:
-        UrlConstraints.allowed_schemes = ['postgresql+asyncpg']
-
-        if v not in UrlConstraints.allowed_schemes:
-            raise ValueError('Invalid PostgresDsn scheme')
-
-        return v
-
     @property
     def database_url(self) -> PostgresDsn:
         return PostgresDsn.build(
@@ -40,11 +26,31 @@ class Settings(BaseSettings):
             path=f"{self.DB_NAME}",
         )
 
-    model_config = SettingsConfigDict(env_file=Path(__file__).resolve().parents[2].joinpath('env/.env'))
+    @field_validator('DB_PORT')
+    def __validate_port(cls, v: int) -> int:
+        if not 1 <= v <= 65_535:
+            raise ValueError("Port must be between 1 and 65535")
+        return v
+
+    @field_validator('DB_SCHEME')
+    def __validate_pg_scheme(cls, v: int) -> UrlConstraints.allowed_schemes:
+        UrlConstraints.allowed_schemes = ['postgresql+asyncpg']
+
+        if v not in UrlConstraints.allowed_schemes:
+            raise ValueError('Invalid PostgresDsn scheme')
+
+        return v
+
+    model_config = SettingsConfigDict(
+        env_file=Path(__file__).resolve().parents[2].joinpath('env/.env'),
+    )
 
 
 @lru_cache
 def get_settings() -> Settings:
     print(f'Loading settings from env')
-    settings = Settings()
-    return settings
+    try:
+        settings = Settings()
+        return settings
+    except Exception as e:
+        exit(e)
