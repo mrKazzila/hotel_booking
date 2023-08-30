@@ -7,6 +7,12 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
+    # ===== BASE SETTINGS =====
+    SECRET_KEY: str
+    ALGORITHM: str
+    TOKEN_EXPIRE_MIN: int
+
+    # ===== DATABASE SETTINGS =====
     DB_SCHEME: str
     DB_HOST: str
     DB_PORT: int
@@ -27,8 +33,8 @@ class Settings(BaseSettings):
 
     @field_validator('DB_PORT')
     def __validate_port(cls, v: int) -> int:
-        MIN_PORT_NUMBER: int = 1
-        MAX_PORT_NUMBER: int = 65_535
+        MIN_PORT_NUMBER: int = 1  # noqa
+        MAX_PORT_NUMBER: int = 65_535  # noqa
 
         if not MIN_PORT_NUMBER <= v <= MAX_PORT_NUMBER:
             raise ValueError(f"Port must be between {MIN_PORT_NUMBER} and {MAX_PORT_NUMBER}")
