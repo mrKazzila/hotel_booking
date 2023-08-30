@@ -1,9 +1,8 @@
-from app.settings.database import async_session_maker
-from sqlalchemy import select
-from app.settings.database import Base
+from typing import Type, TypeVar
 
-from typing import Any, Dict, Generic, List, Optional, Type, TypeVar, Union
+from sqlalchemy import select, insert
 
+from app.settings.database import Base, async_session_maker
 
 ModelType = TypeVar("ModelType", bound=Base)
 
@@ -43,3 +42,12 @@ class BaseServices:
 
             return result.mappings().all()
 
+    @classmethod
+    async def add_entity(cls, **data):
+        async with async_session_maker() as session:
+            query = (
+                insert(cls.model).values(**data)
+            )
+
+            await session.execute(query)
+            await session.commit()
