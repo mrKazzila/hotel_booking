@@ -50,3 +50,19 @@ class ExpireTokenException(HTTPException):
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail='Your token has expired.',
         )
+
+
+class RoomCannotBeBookedException(HTTPException):
+    def __init__(self):
+        super().__init__(
+            status_code=status.HTTP_409_CONFLICT,
+            detail='Room can not be booked.',
+        )
+
+
+class BookingsNotFoundException(HTTPException):
+    def __init__(self):
+        super().__init__(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail='Bookings not found.',
+        )
