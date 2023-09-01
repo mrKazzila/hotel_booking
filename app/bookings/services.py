@@ -1,10 +1,10 @@
 from datetime import date
 
-from sqlalchemy import select, func, insert
+from sqlalchemy import select, func, insert, delete
 
 from app.bookings.models import Bookings
 from app.core.services import BaseServices
-from app.hotels.models import Rooms
+from app.rooms.models import Rooms
 from app.settings.database import async_session_maker
 
 
@@ -76,3 +76,54 @@ class BookingServices(BaseServices):
                 return new_booking.scalar()
             else:
                 return None
+
+    @classmethod
+    async def find_all_user_booking(cls, user_id: int):
+        #
+        """
+
+        SELECT
+            b.room_id, b.user_id, b.date_from, b.date_to, b.price,
+            b.total_cost, b.total_days, r.image_id, r.name, r.description, r.services
+        FROM bookings AS b
+        LEFT JOIN rooms AS r ON b.room_id = r.id
+        WHERE b.user_id  = 3;
+        """
+        async with async_session_maker() as session:
+            query = (
+                select(
+                    Bookings.room_id, Bookings.user_id, Bookings.date_from,
+                    Bookings.date_to, Bookings.price, Bookings.total_cost,
+                    Bookings.total_days, Rooms.image_id, Rooms.name,
+                    Rooms.description, Rooms.services,
+                )
+                .join(Rooms, Bookings.room_id == Rooms.id)
+                .filter(Bookings.user_id == user_id)
+            )
+            result = await session.execute(query)
+
+            return result.mappings().all()
+
+    @classmethod
+    async def delete_user_booking_by_id(cls, booking_id: int, user_id: int):
+        async with async_session_maker() as session:
+            query = (
+                delete(Bookings).filter_by(id=booking_id, user_id=user_id)
+            ).returning(Bookings)
+
+            result = await session.execute(query)
+            await session.commit()
+
+            return result.scalar()
+
+    @classmethod
+    async def delete_user_bookings(cls, user_id: int):
+        async with async_session_maker() as session:
+            query = (
+                delete(Bookings).filter_by(user_id=user_id)
+            ).returning(Bookings)
+
+            result = await session.execute(query)
+            await session.commit()
+
+            return result.mappings().all()
