@@ -1,9 +1,11 @@
 from fastapi import APIRouter, Depends, Response, status
 from fastapi.responses import JSONResponse
 
+from datetime import datetime, timedelta, date, timezone
+
 from app.core.exceptions import UserAlreadyExistException
 from app.settings.config import get_settings as settings
-from app.users.auth import authenticate_user, create_access_token, get_password_hash
+from app.users.auth import authenticate_user, create_access_token, get_password_hash, generate_expire_time
 from app.users.dependencies import get_current_user
 from app.users.models import Users
 from app.users.schemas import SUserAuth
@@ -29,13 +31,18 @@ async def register_user(user_data: SUserAuth):
 @router.post('/login')
 async def login_user(response: Response, user_data: SUserAuth):
     if user := await authenticate_user(email=user_data.email, password=user_data.password):
-        access_token = create_access_token(data={'sub': str(user.id)})
+        expire_time = generate_expire_time(minutes=settings().TOKEN_EXPIRE_MIN)
+
+        access_token = create_access_token(
+            data={'sub': str(user.id)},
+            expire_time=expire_time,
+        )
 
         response.set_cookie(
             key='booking_access_token',
             value=access_token,
             httponly=True,
-            expires=settings().TOKEN_EXPIRE_MIN,
+            expires=expire_time,
         )
 
         return access_token

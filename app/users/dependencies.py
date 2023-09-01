@@ -32,7 +32,7 @@ async def get_current_user(access_token: str = Depends(__get_access_token)):
 
     # TODO: refactor me
     expire_time = payload_data.get('exp')
-    if not expire_time or int(expire_time) < datetime.utcnow().timestamp():
+    if not expire_time or int(expire_time) < int(datetime.utcnow().timestamp()):
         raise ExpireTokenException
 
     user_id: int = int(payload_data.get('sub'))
