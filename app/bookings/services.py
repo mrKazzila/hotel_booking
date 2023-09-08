@@ -126,4 +126,4 @@ class BookingServices(BaseServices):
             result = await session.execute(query)
             await session.commit()
 
-            return result.mappings().all()
+            return result.scalars().all()
