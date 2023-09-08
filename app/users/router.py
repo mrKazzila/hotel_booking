@@ -1,8 +1,6 @@
 from fastapi import APIRouter, Depends, Response, status
 from fastapi.responses import JSONResponse
 
-from datetime import datetime, timedelta, date, timezone
-
 from app.core.exceptions import UserAlreadyExistException
 from app.settings.config import get_settings as settings
 from app.users.auth import authenticate_user, create_access_token, get_password_hash, generate_expire_time
