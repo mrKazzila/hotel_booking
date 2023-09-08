@@ -53,6 +53,7 @@ class ExpireTokenException(HTTPException):
 
 
 class RoomCannotBeBookedException(HTTPException):
+
     def __init__(self):
         super().__init__(
             status_code=status.HTTP_409_CONFLICT,
@@ -61,8 +62,27 @@ class RoomCannotBeBookedException(HTTPException):
 
 
 class BookingsNotFoundException(HTTPException):
+
     def __init__(self):
         super().__init__(
             status_code=status.HTTP_404_NOT_FOUND,
             detail='Bookings not found.',
+        )
+
+
+class HotelNotFoundException(HTTPException):
+
+    def __init__(self):
+        super().__init__(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail='Hotel not found.',
+        )
+
+
+class RoomsNotFoundException(HTTPException):
+
+    def __init__(self):
+        super().__init__(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail='Rooms not found.',
         )
