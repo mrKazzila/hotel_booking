@@ -6,6 +6,14 @@ from pydantic import PostgresDsn, field_validator, UrlConstraints, ValidationErr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
+class ProjectSettings(BaseSettings):
+    pass
+
+
+class DataBaseSettings(BaseSettings):
+    pass
+
+
 class Settings(BaseSettings):
     # ===== BASE SETTINGS =====
     SECRET_KEY: str
