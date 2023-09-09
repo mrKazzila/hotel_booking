@@ -1,3 +1,5 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -7,9 +9,19 @@ from app.hotels.router import router as hotels_router
 from app.images.router import router as images_router
 from app.pages.router import router as pages_router
 from app.rooms.router import router as rooms_router
+from app.settings.redis_connect import redis_connect
 from app.users.router import router as users_router
 
-app = FastAPI()
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    print('Service started')
+    await redis_connect()
+    yield
+    print("Service exited")
+
+
+app = FastAPI(lifespan=lifespan)
 
 app.mount(
     path='/static',
