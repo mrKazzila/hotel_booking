@@ -1,8 +1,11 @@
+import asyncio
+
 from fastapi import APIRouter
+from fastapi_cache.decorator import cache
 
 from app.core.exceptions import HotelNotFoundException
-from app.hotels.services import HotelServices
 from app.hotels.schemas import SHotelInfo
+from app.hotels.services import HotelServices
 
 router = APIRouter(
     prefix='/hotels',
@@ -11,9 +14,10 @@ router = APIRouter(
 
 
 @router.get('/')
+@cache(expire=60)
 async def get_hotels() -> list[SHotelInfo]:
     if hotels := await HotelServices.find_all():
-        print(list(hotels))
+        await asyncio.sleep(5)  # for cache example
         return hotels
 
     raise HotelNotFoundException
