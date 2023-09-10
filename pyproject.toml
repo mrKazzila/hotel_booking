@@ -18,6 +18,9 @@ asyncpg = "^0.28.0"
 alembic = "^1.11.3"
 greenlet = "^2.0.2"
 fastapi-cache2 = {extras = ["redis"], version = "^0.2.1"}
+celery = "^5.3.4"
+flower = "^2.0.1"
+pillow = "^10.0.0"
 
 
 [build-system]
