@@ -6,27 +6,49 @@ from pydantic import PostgresDsn, field_validator, UrlConstraints, ValidationErr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-class ProjectSettings(BaseSettings):
-    pass
+class ProjectBaseSettings(BaseSettings):
+    __ROOT_DIR_ID: int = 2
+
+    model_config = SettingsConfigDict(
+        env_file=Path(__file__).resolve().parents[__ROOT_DIR_ID].joinpath('env/.env'),
+    )
+
+    @classmethod
+    def _validate_port(cls, v: int) -> int:
+        MIN_PORT_NUMBER: int = 1  # noqa
+        MAX_PORT_NUMBER: int = 65_535  # noqa
+
+        if MIN_PORT_NUMBER <= v <= MAX_PORT_NUMBER:
+            return v
+        raise ValueError(f'Port must be between {MIN_PORT_NUMBER} and {MAX_PORT_NUMBER}')
 
 
-class DataBaseSettings(BaseSettings):
-    pass
+class ProjectSettings(ProjectBaseSettings):
+    DOMAIN: str  # TODO: need validate
+    DOMAIN_PORT: int
 
-
-class Settings(BaseSettings):
-    # ===== BASE SETTINGS =====
     SECRET_KEY: str
     ALGORITHM: str
-    TOKEN_EXPIRE_MIN: int
+    TOKEN_EXPIRE_MIN: int  # TODO: need validate
 
-    # ===== DATABASE SETTINGS =====
+    SMTP_HOST: str
+    SMTP_PORT: int
+    SMTP_USER: str
+    SMTP_PASS: str
+
+    field_validator('DOMAIN_PORT', 'SMTP_PORT')(ProjectBaseSettings._validate_port)
+
+
+class DataBaseSettings(ProjectBaseSettings):
     DB_SCHEME: str
     DB_HOST: str
     DB_PORT: int
     DB_USER: str
     DB_PASS: str
     DB_NAME: str
+
+    REDIS_HOST: str
+    REDIS_PORT: int
 
     @property
     def database_url(self) -> PostgresDsn:
@@ -39,27 +61,20 @@ class Settings(BaseSettings):
             path=f"{self.DB_NAME}",
         )
 
-    @field_validator('DB_PORT')
-    def __validate_port(cls, v: int) -> int:
-        MIN_PORT_NUMBER: int = 1  # noqa
-        MAX_PORT_NUMBER: int = 65_535  # noqa
-
-        if not MIN_PORT_NUMBER <= v <= MAX_PORT_NUMBER:
-            raise ValueError(f"Port must be between {MIN_PORT_NUMBER} and {MAX_PORT_NUMBER}")
-        return v
+    field_validator('DB_PORT', 'REDIS_PORT')(ProjectBaseSettings._validate_port)
 
     @field_validator('DB_SCHEME')
     def __validate_pg_scheme(cls, v: int) -> UrlConstraints.allowed_schemes:
         UrlConstraints.allowed_schemes = ['postgresql+asyncpg']
 
-        if v not in UrlConstraints.allowed_schemes:
-            raise ValueError('Invalid PostgresDsn scheme')
+        if v in UrlConstraints.allowed_schemes:
+            return v
 
-        return v
+        raise ValueError('Invalid PostgresDsn scheme')
 
-    model_config = SettingsConfigDict(
-        env_file=Path(__file__).resolve().parents[2].joinpath('env/.env'),
-    )
+
+class Settings(ProjectSettings, DataBaseSettings):
+    STATIC_PATH: str = 'app/static/'
 
 
 @lru_cache
