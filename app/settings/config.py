@@ -63,10 +63,10 @@ class Settings(BaseSettings):
 
 
 @lru_cache
-def get_settings() -> Settings:
+def settings() -> Settings:
     print(f'Loading settings from env')
     try:
-        settings = Settings()
-        return settings
+        settings_ = Settings()
+        return settings_
     except ValidationError as e:
         exit(e)

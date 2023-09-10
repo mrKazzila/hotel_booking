@@ -9,7 +9,7 @@ from app.core.exceptions import (
     IncorrectTokenFormatException,
     UserNotFoundException,
 )
-from app.settings.config import get_settings as settings
+from app.settings.config import settings
 from app.users.services import UserServices
 
 

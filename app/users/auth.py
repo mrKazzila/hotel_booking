@@ -5,7 +5,7 @@ from passlib.context import CryptContext
 from pydantic import EmailStr
 
 from app.core.exceptions import IncorrectEmailOrPasswordException
-from app.settings.config import get_settings as settings
+from app.settings.config import settings
 from app.users.services import UserServices
 
 pwd_context = CryptContext(

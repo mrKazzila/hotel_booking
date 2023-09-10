@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, Response, status
 from fastapi.responses import JSONResponse
 
 from app.core.exceptions import UserAlreadyExistException
-from app.settings.config import get_settings as settings
+from app.settings.config import settings
 from app.users.auth import authenticate_user, create_access_token, get_password_hash, generate_expire_time
 from app.users.dependencies import get_current_user
 from app.users.models import Users
