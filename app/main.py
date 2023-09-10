@@ -9,6 +9,7 @@ from app.hotels.router import router as hotels_router
 from app.images.router import router as images_router
 from app.pages.router import router as pages_router
 from app.rooms.router import router as rooms_router
+from app.settings.config import settings
 from app.settings.redis_setup import redis_setup
 from app.users.router import router as users_router
 
@@ -25,7 +26,7 @@ app = FastAPI(lifespan=lifespan)
 
 app.mount(
     path='/static',
-    app=StaticFiles(directory='app/static'),  # TODO: move to settings
+    app=StaticFiles(directory=settings().STATIC_PATH),  # TODO: move to settings
     name='static',
 )
 
@@ -36,7 +37,7 @@ app.include_router(router=rooms_router)
 app.include_router(router=pages_router)
 app.include_router(router=images_router)
 
-origins = ['http://localhost:3000']  # TODO: move to env
+origins = [f'{settings().DOMAIN}:{settings().DOMAIN_PORT}', ]  # TODO: move to env
 
 app.add_middleware(
     CORSMiddleware,
