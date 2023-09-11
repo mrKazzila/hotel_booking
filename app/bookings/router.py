@@ -5,6 +5,9 @@ from app.bookings.services import BookingServices
 from app.core.exceptions import BookingsNotFoundException, RoomCannotBeBookedException
 from app.users.dependencies import get_current_user
 from app.users.models import Users
+from app.bookings.tasks import send_booking_confirmation_email
+from app.settings.config import settings
+
 
 router = APIRouter(
     prefix='/bookings',
@@ -33,6 +36,8 @@ async def add_booking(
             date_from=data.date_from,
             date_to=data.date_to,
     ):
+        email_to_ = settings().SMTP_USER
+        send_booking_confirmation_email.delay(booking.id, email_to_)
         return booking
 
     raise RoomCannotBeBookedException
