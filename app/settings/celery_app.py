@@ -11,5 +11,6 @@ celery_app = Celery(
 celery_app.autodiscover_tasks(
     [
         'app.images',
+        'app.bookings',
     ],
 )
