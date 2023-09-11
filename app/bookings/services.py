@@ -74,8 +74,8 @@ class BookingServices(BaseServices):
                 await session.commit()
 
                 return new_booking.scalar()
-            else:
-                return None
+
+            return None
 
     @classmethod
     async def find_all_user_booking(cls, user_id: int):
@@ -100,9 +100,39 @@ class BookingServices(BaseServices):
                 .join(Rooms, Bookings.room_id == Rooms.id)
                 .filter(Bookings.user_id == user_id)
             )
-            result = await session.execute(query)
 
+            result = await session.execute(query)
             return result.mappings().all()
+
+    @classmethod
+    async def find_user_booking_by_id(cls, booking_id: int):
+        #
+        """
+
+        SELECT
+            b.room_id, b.user_id, b.date_from, b.date_to, b.price,
+            b.total_cost, b.total_days, r.image_id, r.name, r.description, r.services
+        FROM bookings AS b
+        LEFT JOIN rooms AS r ON b.room_id = r.id
+        WHERE b.id = booking_id;
+        """
+        async with async_session_maker() as session:
+            query = (
+                select(
+                    Bookings.room_id, Bookings.user_id, Bookings.date_from,
+                    Bookings.date_to, Bookings.price, Bookings.total_cost,
+                    Bookings.total_days, Rooms.image_id, Rooms.name,
+                    Rooms.description, Rooms.services,
+                )
+                .join(Rooms, Bookings.room_id == Rooms.id)
+                .filter(Bookings.id == booking_id)
+            )
+            print('1212121212')
+            result = await session.execute(query)
+            print(f'{result=}')
+            tmp = result.mappings().all()
+            print(f'{tmp=}')
+            return tmp
 
     @classmethod
     async def delete_user_booking_by_id(cls, booking_id: int, user_id: int):
