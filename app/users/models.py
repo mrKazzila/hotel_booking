@@ -1,5 +1,5 @@
 from sqlalchemy import String
-from sqlalchemy.orm import mapped_column, Mapped
+from sqlalchemy.orm import mapped_column, Mapped, relationship
 
 from app.settings.database import Base
 
@@ -21,3 +21,8 @@ class Users(Base):
         type_=String(500),
         nullable=False,
     )
+
+    booking: Mapped[list['Bookings']] = relationship(back_populates='user')
+
+    def __str__(self):
+        return f'{self.email}'

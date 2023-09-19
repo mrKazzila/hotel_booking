@@ -1,6 +1,6 @@
 from sqlalchemy import String, Integer, ForeignKey
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.orm import mapped_column, Mapped
+from sqlalchemy.orm import mapped_column, Mapped, relationship
 
 from app.settings.database import Base
 
@@ -42,3 +42,9 @@ class Rooms(Base):
         doc='Room image id',
         type_=Integer,
     )
+
+    hotel: Mapped["Hotels"] = relationship(back_populates='rooms')
+    bookings: Mapped[list["Bookings"]] = relationship(back_populates='room')
+
+    def __str__(self):
+        return f'{self.name}'

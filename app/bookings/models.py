@@ -1,7 +1,7 @@
 from datetime import date
 
 from sqlalchemy import Date, Computed, ForeignKey, Integer
-from sqlalchemy.orm import mapped_column, Mapped
+from sqlalchemy.orm import mapped_column, Mapped, relationship
 
 from app.settings.database import Base
 
@@ -40,3 +40,9 @@ class Bookings(Base):
         doc='Booking day count',
         type_=Integer,
     )
+
+    user = relationship('Users', back_populates='booking')
+    room = relationship('Rooms', back_populates='bookings')
+
+    def __str__(self):
+        return f'Booking №{self.id}'
