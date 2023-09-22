@@ -1,7 +1,7 @@
 import pytest
 from httpx import AsyncClient
 
-from app.tests.bookings.integration.parametrize_data import (
+from app.tests.bookings.integration.parametrize_data.routers import (
     router_add_and_get_booking_data,
     router_delete_user_booking_by_id_data,
 )
@@ -38,7 +38,11 @@ async def test_add_and_get_booking(
     'booking_id, status_code',
     router_delete_user_booking_by_id_data,
 )
-async def test_delete_user_booking_by_id(booking_id, status_code, authenticated_ac: AsyncClient):
+async def test_delete_user_booking_by_id(
+        booking_id: int,
+        status_code: int,
+        authenticated_ac: AsyncClient,
+) -> None:
     response = await authenticated_ac.delete(
         '/bookings/',
         params={'booking_id': booking_id},
