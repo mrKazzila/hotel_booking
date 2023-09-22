@@ -7,7 +7,7 @@ router = APIRouter(
     tags=['Frontend'],
 )
 
-templates = Jinja2Templates(directory='app/templates')
+templates = Jinja2Templates(directory='app/templates')  # todo: move to settings
 
 
 @router.get('/hotels')
