@@ -127,7 +127,7 @@ class BookingServices(BaseServices):
                 .join(Rooms, Bookings.room_id == Rooms.id)
                 .filter(Bookings.id == booking_id)
             )
-            print('1212121212')
+            print('1212121212')  # FIXME
             result = await session.execute(query)
             print(f'{result=}')
             tmp = result.mappings().all()
