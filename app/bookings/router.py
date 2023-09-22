@@ -36,7 +36,7 @@ async def add_booking(
             date_from=data.date_from,
             date_to=data.date_to,
     ):
-        email_to_ = settings().SMTP_USER
+        email_to_ = settings().SMTP_USER  # FIXME: delete me
         send_booking_confirmation_email.delay(booking.id, email_to_)
         return booking
 
