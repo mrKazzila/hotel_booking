@@ -10,7 +10,7 @@ from app.tests.bookings.integration.parametrize_data import services_add_and_get
     'user_id, room_id, date_from, date_to',
     services_add_and_get_booking_data,
 )
-async def test_services_add_and_get_booking(
+async def test_add_and_get_booking(
         user_id: int,
         room_id: int,
         date_from: datetime,
