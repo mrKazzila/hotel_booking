@@ -17,13 +17,15 @@ router = APIRouter(
 
 @router.post('/register')
 async def register_user(user_data: SUserAuth):
-    if _ := not await UserServices.find_one_or_none(email=user_data.email):
-        await UserServices.create_user(
-            email=user_data.email,
-            hashed_password=get_password_hash(password=user_data.password),
-        )
+    user_exists = await UserServices.find_one_or_none(email=user_data.email)
 
-    raise UserAlreadyExistException
+    if user_exists:
+        raise UserAlreadyExistException
+
+    await UserServices.create_user(
+        email=user_data.email,
+        hashed_password=get_password_hash(password=user_data.password),
+    )
 
 
 @router.post('/login')
@@ -37,7 +39,7 @@ async def login_user(response: Response, user_data: SUserAuth):
         )
 
         response.set_cookie(
-            key='booking_access_token',
+            key='booking_access_token',  # todo: move to settings
             value=access_token,
             httponly=True,
             expires=expire_time,
