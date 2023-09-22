@@ -2,14 +2,14 @@ import pytest
 from httpx import AsyncClient
 
 from app.tests.bookings.integration.parametrize_data.routers import (
-    router_add_and_get_booking_data,
-    router_delete_user_booking_by_id_data,
+    add_and_get_booking_data,
+    delete_user_booking_by_id_data,
 )
 
 
 @pytest.mark.parametrize(
     'room_id, date_from, date_to, book_count, status_code',
-    router_add_and_get_booking_data,
+    add_and_get_booking_data,
 )
 async def test_add_and_get_booking(
         room_id: int,
@@ -36,7 +36,7 @@ async def test_add_and_get_booking(
 
 @pytest.mark.parametrize(
     'booking_id, status_code',
-    router_delete_user_booking_by_id_data,
+    delete_user_booking_by_id_data,
 )
 async def test_delete_user_booking_by_id(
         booking_id: int,

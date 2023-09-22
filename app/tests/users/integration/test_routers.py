@@ -2,7 +2,7 @@ import pytest
 from httpx import AsyncClient
 
 from app.users.services import UserServices
-from app.tests.users.integration.parametrize_data import register_user_data
+from app.tests.users.integration.parametrize_data.routers import register_user_data
 
 
 @pytest.mark.parametrize(

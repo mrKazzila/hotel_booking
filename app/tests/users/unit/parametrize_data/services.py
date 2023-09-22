@@ -4,11 +4,10 @@ users_find_by_id_data = [
     (2, 'artem@example.com'),
 ]
 
-negative_users_find_by_id = [
+negative_users_find_by_id_data = [
     # user_id
     5,
     6,
     -1,
     0,
 ]
-

@@ -1,4 +1,4 @@
-router_add_and_get_booking_data = [
+add_and_get_booking_data = [
     # room_id, date_from, date_to, book_count, status_code
     (4, '2030-05-01', '2030-05-21', 3, 200),
     (4, '2030-05-01', '2030-05-21', 4, 200),
@@ -14,7 +14,7 @@ router_add_and_get_booking_data = [
     (4, '2030-05-21', '2030-05-22', 12, 200),
 ]
 
-router_delete_user_booking_by_id_data = [
+delete_user_booking_by_id_data = [
     # booking_id, status_code
     (3, 200),
     (3, 404),
