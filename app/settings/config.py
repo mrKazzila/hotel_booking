@@ -1,6 +1,7 @@
 from functools import lru_cache
 from pathlib import Path
 from sys import exit
+from typing import Literal
 
 from pydantic import PostgresDsn, field_validator, UrlConstraints, ValidationError
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -24,6 +25,8 @@ class ProjectBaseSettings(BaseSettings):
 
 
 class ProjectSettings(ProjectBaseSettings):
+    MODE: Literal['DEV', 'TEST', 'PROD']
+
     DOMAIN: str  # TODO: need validate
     DOMAIN_PORT: int
 
@@ -39,7 +42,7 @@ class ProjectSettings(ProjectBaseSettings):
     field_validator('DOMAIN_PORT', 'SMTP_PORT')(ProjectBaseSettings._validate_port)
 
 
-class DataBaseSettings(ProjectBaseSettings):
+class DatabaseSettings(ProjectBaseSettings):
     DB_SCHEME: str
     DB_HOST: str
     DB_PORT: int
@@ -47,8 +50,18 @@ class DataBaseSettings(ProjectBaseSettings):
     DB_PASS: str
     DB_NAME: str
 
+    TEST_DB_SCHEME: str
+    TEST_DB_HOST: str
+    TEST_DB_PORT: int
+    TEST_DB_USER: str
+    TEST_DB_PASS: str
+    TEST_DB_NAME: str
+
     REDIS_HOST: str
     REDIS_PORT: int
+
+    # class Config:
+    #     env_prefix = "TEST_" if os.getenv("MODE") == "TEST" else ""
 
     @property
     def database_url(self) -> PostgresDsn:
@@ -61,9 +74,20 @@ class DataBaseSettings(ProjectBaseSettings):
             path=f"{self.DB_NAME}",
         )
 
-    field_validator('DB_PORT', 'REDIS_PORT')(ProjectBaseSettings._validate_port)
+    @property
+    def test_database_url(self) -> PostgresDsn:
+        return PostgresDsn.build(
+            scheme=self.TEST_DB_SCHEME,
+            username=self.TEST_DB_USER,
+            password=self.TEST_DB_PASS,
+            host=str(self.TEST_DB_HOST),
+            port=self.TEST_DB_PORT,
+            path=f"{self.TEST_DB_NAME}",
+        )
 
-    @field_validator('DB_SCHEME')
+    field_validator('DB_PORT', 'REDIS_PORT', 'TEST_DB_PORT')(ProjectBaseSettings._validate_port)
+
+    @field_validator('DB_SCHEME', 'TEST_DB_SCHEME')
     def __validate_pg_scheme(cls, v: int) -> UrlConstraints.allowed_schemes:
         UrlConstraints.allowed_schemes = ['postgresql+asyncpg']
 
@@ -73,8 +97,9 @@ class DataBaseSettings(ProjectBaseSettings):
         raise ValueError('Invalid PostgresDsn scheme')
 
 
-class Settings(ProjectSettings, DataBaseSettings):
+class Settings(ProjectSettings, DatabaseSettings):
     STATIC_PATH: str = 'app/static/'
+    TEST_PATH: str = 'app/tests/'
 
 
 @lru_cache
@@ -83,5 +108,6 @@ def settings() -> Settings:
     try:
         settings_ = Settings()
         return settings_
+
     except ValidationError as e:
         exit(e)
