@@ -7,7 +7,7 @@ from app.settings.config import settings
 
 async def redis_setup():
     redis = await aioredis.from_url(
-        url=f'{settings().REDIS_HOST}:{settings().REDIS_PORT}',  # TODO: move to env
+        url=f'{settings().REDIS_HOST}:{settings().REDIS_PORT}',
         encoding='utf-8',
         decode_responses=True,
     )

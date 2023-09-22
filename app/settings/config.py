@@ -100,6 +100,8 @@ class DatabaseSettings(ProjectBaseSettings):
 class Settings(ProjectSettings, DatabaseSettings):
     STATIC_PATH: str = 'app/static/'
     TEST_PATH: str = 'app/tests/'
+    TEMPLATES_PATH: str = 'app/templates'
+    JWT_TOKEN_NAME: str = 'booking_access_token'
 
 
 @lru_cache

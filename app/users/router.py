@@ -39,7 +39,7 @@ async def login_user(response: Response, user_data: SUserAuth):
         )
 
         response.set_cookie(
-            key='booking_access_token',  # todo: move to settings
+            key=settings().JWT_TOKEN_NAME,
             value=access_token,
             httponly=True,
             expires=expire_time,
@@ -50,7 +50,7 @@ async def login_user(response: Response, user_data: SUserAuth):
 
 @router.post('/logout')
 async def logout_user(response: Response):
-    response.delete_cookie('booking_access_token')
+    response.delete_cookie(settings().JWT_TOKEN_NAME)
     return JSONResponse(status_code=status.HTTP_200_OK, content='success logout')
 
 

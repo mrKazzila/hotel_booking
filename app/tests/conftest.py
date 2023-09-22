@@ -87,5 +87,5 @@ async def authenticated_ac():
                 'password': 'test',
             },
         )
-        assert ac.cookies['booking_access_token']  # todo: get from settings
+        assert ac.cookies[settings().JWT_TOKEN_NAME]
         yield ac

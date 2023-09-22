@@ -14,7 +14,7 @@ from app.users.services import UserServices
 
 
 def __get_access_token(request: Request):
-    if access_token := request.cookies.get('booking_access_token'):  # todo: move to settings
+    if access_token := request.cookies.get(settings().JWT_TOKEN_NAME):
         return access_token
 
     raise EmptyTokenException

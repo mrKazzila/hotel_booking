@@ -1,13 +1,15 @@
 from fastapi import APIRouter, Depends, Request
 from fastapi.templating import Jinja2Templates
+
 from app.hotels.router import get_hotels
+from app.settings.config import settings
 
 router = APIRouter(
     prefix='/pages',
     tags=['Frontend'],
 )
 
-templates = Jinja2Templates(directory='app/templates')  # todo: move to settings
+templates = Jinja2Templates(directory=settings().TEMPLATES_PATH)
 
 
 @router.get('/hotels')
