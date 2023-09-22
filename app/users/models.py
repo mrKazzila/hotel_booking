@@ -13,7 +13,7 @@ class Users(Base):
     email: Mapped[str] = mapped_column(
         doc='User email',
         type_=String(100),
-        # unique=True,
+        unique=True,
         nullable=False,
     )
     hashed_password: Mapped[str] = mapped_column(
@@ -25,4 +25,7 @@ class Users(Base):
     booking: Mapped[list['Bookings']] = relationship(back_populates='user')
 
     def __str__(self):
+        return f'{self.email}'
+
+    def __repr__(self):
         return f'{self.email}'
