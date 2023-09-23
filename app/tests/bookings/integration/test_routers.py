@@ -7,6 +7,7 @@ from app.tests.bookings.integration.parametrize_data.routers import (
 )
 
 
+@pytest.mark.integration
 @pytest.mark.parametrize(
     'room_id, date_from, date_to, book_count, status_code',
     add_and_get_booking_data,
@@ -34,6 +35,7 @@ async def test_add_and_get_booking(
     assert len(response_.json()) == book_count
 
 
+@pytest.mark.integration
 @pytest.mark.parametrize(
     'booking_id, status_code',
     delete_user_booking_by_id_data,

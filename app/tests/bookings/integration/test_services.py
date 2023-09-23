@@ -6,6 +6,7 @@ from app.bookings.services import BookingServices
 from app.tests.bookings.integration.parametrize_data.services import add_and_get_booking_data
 
 
+@pytest.mark.integration
 @pytest.mark.parametrize(
     'user_id, room_id, date_from, date_to',
     add_and_get_booking_data,

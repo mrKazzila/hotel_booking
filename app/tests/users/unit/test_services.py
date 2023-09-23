@@ -7,6 +7,7 @@ from app.tests.users.unit.parametrize_data.services import (
 from app.users.services import UserServices
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     'user_id, email',
     users_find_by_id_data,
@@ -18,6 +19,7 @@ async def test_users_find_by_id(user_id: int, email: str) -> None:
     assert user.email == email
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     'user_id',
     negative_users_find_by_id_data,

@@ -5,6 +5,7 @@ from app.users.services import UserServices
 from app.tests.users.integration.parametrize_data.routers import register_user_data
 
 
+@pytest.mark.integration
 @pytest.mark.parametrize(
     'email, password, status_code, is_add_in_db',
     register_user_data,
