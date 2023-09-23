@@ -25,3 +25,4 @@ env/
 # PyCharm
 .idea/
 
+*.ruff_cache/*
