@@ -1,0 +1,11 @@
+exclude_dirs: [
+  '*/.venv',
+  '*/migrations/*',
+  '*/tests/*',
+]
+
+try_except_pass:
+  check_typed_exception: True
+
+try_except_continue:
+  check_typed_exception: True

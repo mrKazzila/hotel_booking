@@ -1,0 +1,24 @@
+[style]
+based_on_style = pep8
+
+align_closing_bracket_with_visual_indent = False
+blank_line_before_nested_class_or_def = True
+each_dict_entry_on_separate_line = True
+
+column_limit = 100
+indent_width = 4
+coalesce_brackets = True
+
+dedent_closing_brackets = True
+
+space_between_ending_comma_and_closing_bracket = False
+split_before_named_assigns = True
+split_before_arithmetic_operator = True
+split_before_bitwise_operator = True
+split_before_logical_operator = True
+split_before_dot = True
+split_before_first_argument = True
+split_before_expression_after_opening_paren = True
+split_complex_comprehension = True
+
+i18n_function_call = ['_']
