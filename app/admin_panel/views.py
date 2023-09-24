@@ -27,7 +27,12 @@ class BookingsAdmin(ModelView, model=Bookings):
     icon = 'fa-solid fa-book'
 
     column_list = '__all__'
-    column_sortable_list = [Bookings.id, Bookings.date_from, Bookings.date_to, Bookings.price]
+    column_sortable_list = [
+        Bookings.id,
+        Bookings.date_from,
+        Bookings.date_to,
+        Bookings.price,
+    ]
 
     page_size = 10
     page_size_options = [20, 40, 100]
@@ -38,7 +43,14 @@ class RoomsAdmin(ModelView, model=Rooms):
     name_plural = 'Rooms'
     icon = 'fa-solid fa-bed'
 
-    column_list = [Rooms.id, Rooms.hotel, Rooms.name, Rooms.price, Rooms.quantity, Rooms.bookings]
+    column_list = [
+        Rooms.id,
+        Rooms.hotel,
+        Rooms.name,
+        Rooms.price,
+        Rooms.quantity,
+        Rooms.bookings,
+    ]
     column_sortable_list = [Rooms.id, Rooms.name, Rooms.price, Rooms.quantity]
 
     page_size = 10
@@ -50,7 +62,13 @@ class HotelsAdmin(ModelView, model=Hotels):
     name_plural = 'Hotels'
     icon = 'fa-solid fa-hotel'
 
-    column_list = [Hotels.id, Hotels.name, Hotels.rooms_quantity, Hotels.rooms, Hotels.location]
+    column_list = [
+        Hotels.id,
+        Hotels.name,
+        Hotels.rooms_quantity,
+        Hotels.rooms,
+        Hotels.location,
+    ]
     column_sortable_list = [Hotels.id, Hotels.name, Hotels.rooms_quantity]
 
     page_size = 10

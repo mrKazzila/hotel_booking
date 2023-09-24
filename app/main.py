@@ -6,7 +6,7 @@ from fastapi.staticfiles import StaticFiles
 from sqladmin import Admin
 
 from app.admin_panel.auth import authentication_backend
-from app.admin_panel.views import BookingsAdmin, UsersAdmin, RoomsAdmin, HotelsAdmin
+from app.admin_panel.views import BookingsAdmin, HotelsAdmin, RoomsAdmin, UsersAdmin
 from app.bookings.router import router as booking_router
 from app.hotels.router import router as hotels_router
 from app.images.router import router as images_router
@@ -23,7 +23,7 @@ async def lifespan(app: FastAPI):
     print('Service started')
     await redis_setup()
     yield
-    print("Service exited")
+    print('Service exited')
 
 
 app = FastAPI(lifespan=lifespan)
@@ -52,7 +52,7 @@ app.mount(
     app=StaticFiles(directory=settings().STATIC_PATH),
     name='static',
 )
-origins = [f'{settings().DOMAIN}:{settings().DOMAIN_PORT}', ]
+origins = [f'{settings().DOMAIN}:{settings().DOMAIN_PORT}']
 
 app.add_middleware(
     CORSMiddleware,
@@ -60,8 +60,10 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=['GET', 'POST', 'OPTIONS', 'DELETE', 'PATCH', 'PUT'],
     allow_headers=[
-        'Content-Type', 'Set-Cookie',
-        'Access-Control-Allow-Headers', 'Access-Control-Allow-Origin',
+        'Content-Type',
+        'Set-Cookie',
+        'Access-Control-Allow-Headers',
+        'Access-Control-Allow-Origin',
         'Authorization',
     ],
 )

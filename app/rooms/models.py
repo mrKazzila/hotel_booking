@@ -1,6 +1,6 @@
-from sqlalchemy import String, Integer, ForeignKey
+from sqlalchemy import ForeignKey, Integer, String
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.orm import mapped_column, Mapped, relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.settings.database import Base
 
@@ -10,8 +10,8 @@ class Rooms(Base):
 
     __tablename__ = 'rooms'
 
-    id: Mapped[int] = mapped_column(primary_key=True)
-    hotel_id: Mapped[str] = mapped_column(ForeignKey("hotels.id"), nullable=False)
+    id: Mapped[int] = mapped_column(primary_key=True)  # noqa: A003
+    hotel_id: Mapped[str] = mapped_column(ForeignKey('hotels.id'), nullable=False)
 
     name: Mapped[str] = mapped_column(
         doc='Room name',
@@ -43,8 +43,8 @@ class Rooms(Base):
         type_=Integer,
     )
 
-    hotel: Mapped["Hotels"] = relationship(back_populates='rooms')
-    bookings: Mapped[list["Bookings"]] = relationship(back_populates='room')
+    hotel: Mapped['Hotels'] = relationship(back_populates='rooms')
+    bookings: Mapped[list['Bookings']] = relationship(back_populates='room')
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'{self.name}'

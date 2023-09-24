@@ -3,7 +3,7 @@ from pathlib import Path
 from sys import exit
 from typing import Literal
 
-from pydantic import PostgresDsn, field_validator, UrlConstraints, ValidationError
+from pydantic import PostgresDsn, UrlConstraints, ValidationError, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -21,7 +21,9 @@ class ProjectBaseSettings(BaseSettings):
 
         if MIN_PORT_NUMBER <= v <= MAX_PORT_NUMBER:
             return v
-        raise ValueError(f'Port must be between {MIN_PORT_NUMBER} and {MAX_PORT_NUMBER}')
+        raise ValueError(
+            f'Port must be between {MIN_PORT_NUMBER} and {MAX_PORT_NUMBER}',
+        )
 
 
 class ProjectSettings(ProjectBaseSettings):
@@ -61,7 +63,6 @@ class DatabaseSettings(ProjectBaseSettings):
     REDIS_PORT: int
 
     # class Config:
-    #     env_prefix = "TEST_" if os.getenv("MODE") == "TEST" else ""
 
     @property
     def database_url(self) -> PostgresDsn:
@@ -71,7 +72,7 @@ class DatabaseSettings(ProjectBaseSettings):
             password=self.DB_PASS,
             host=str(self.DB_HOST),
             port=self.DB_PORT,
-            path=f"{self.DB_NAME}",
+            path=f'{self.DB_NAME}',
         )
 
     @property
@@ -82,10 +83,12 @@ class DatabaseSettings(ProjectBaseSettings):
             password=self.TEST_DB_PASS,
             host=str(self.TEST_DB_HOST),
             port=self.TEST_DB_PORT,
-            path=f"{self.TEST_DB_NAME}",
+            path=f'{self.TEST_DB_NAME}',
         )
 
-    field_validator('DB_PORT', 'REDIS_PORT', 'TEST_DB_PORT')(ProjectBaseSettings._validate_port)
+    field_validator('DB_PORT', 'REDIS_PORT', 'TEST_DB_PORT')(
+        ProjectBaseSettings._validate_port,
+    )
 
     @field_validator('DB_SCHEME', 'TEST_DB_SCHEME')
     def __validate_pg_scheme(cls, v: int) -> UrlConstraints.allowed_schemes:
@@ -106,7 +109,7 @@ class Settings(ProjectSettings, DatabaseSettings):
 
 @lru_cache
 def settings() -> Settings:
-    print(f'Loading settings from env')
+    print('Loading settings from env')
     try:
         settings_ = Settings()
         return settings_

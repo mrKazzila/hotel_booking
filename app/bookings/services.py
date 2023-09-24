@@ -1,6 +1,6 @@
 from datetime import date
 
-from sqlalchemy import select, func, insert, delete
+from sqlalchemy import delete, func, insert, select
 
 from app.bookings.models import Bookings
 from app.core.services import BaseServices
@@ -12,7 +12,13 @@ class BookingServices(BaseServices):
     model = Bookings
 
     @classmethod
-    async def create_booking(cls, user_id: int, room_id: int, date_from: date, date_to: date):
+    async def create_booking(
+        cls,
+        user_id: int,
+        room_id: int,
+        date_from: date,
+        date_to: date,
+    ):
         #
         """
         ROW SQL EXAMPLE
@@ -29,19 +35,33 @@ class BookingServices(BaseServices):
         """
         # TODO refactor me
         booked_rooms_query = (
-            select(Bookings)
-            .where(
-                (Bookings.room_id == room_id) &
-                (
-                        ((Bookings.date_from >= date_from) & (Bookings.date_from <= date_to)) |
-                        ((Bookings.date_from <= date_from) & (Bookings.date_to > date_from))
-                )
+            select(Bookings).where(
+                (Bookings.room_id == room_id)
+                & (
+                    (
+                        (Bookings.date_from >= date_from)
+                        & (Bookings.date_from <= date_to)
+                    )
+                    | (
+                        (Bookings.date_from <= date_from)
+                        & (Bookings.date_to > date_from)
+                    )
+                ),
             )
         ).cte('booked_rooms')
 
         rooms_left_query = (
-            select((Rooms.quantity - func.count(booked_rooms_query.c.room_id)).label('rooms_left'))
-            .select_from(Rooms).join(booked_rooms_query, booked_rooms_query.c.room_id == Rooms.id, isouter=True)
+            select(
+                (Rooms.quantity - func.count(booked_rooms_query.c.room_id)).label(
+                    'rooms_left',
+                ),
+            )
+            .select_from(Rooms)
+            .join(
+                booked_rooms_query,
+                booked_rooms_query.c.room_id == Rooms.id,
+                isouter=True,
+            )
             .where(Rooms.id == room_id)
             .group_by(Rooms.quantity, booked_rooms_query.c.room_id)
         )
@@ -51,17 +71,13 @@ class BookingServices(BaseServices):
             get_rooms_left: int = rooms_left.scalar()
 
             if get_rooms_left > 0:
-                get_room_price_query = (
-                    select(Rooms.price)
-                    .filter_by(id=room_id)
-                )
+                get_room_price_query = select(Rooms.price).filter_by(id=room_id)
 
                 get_room_price = await session.execute(get_room_price_query)
                 room_price: int = get_room_price.scalar()
 
                 add_booking = (
-                    insert(Bookings)
-                    .values(
+                    insert(Bookings).values(
                         room_id=room_id,
                         user_id=user_id,
                         date_from=date_from,
@@ -92,10 +108,17 @@ class BookingServices(BaseServices):
         async with async_session_maker() as session:
             query = (
                 select(
-                    Bookings.room_id, Bookings.user_id, Bookings.date_from,
-                    Bookings.date_to, Bookings.price, Bookings.total_cost,
-                    Bookings.total_days, Rooms.image_id, Rooms.name,
-                    Rooms.description, Rooms.services,
+                    Bookings.room_id,
+                    Bookings.user_id,
+                    Bookings.date_from,
+                    Bookings.date_to,
+                    Bookings.price,
+                    Bookings.total_cost,
+                    Bookings.total_days,
+                    Rooms.image_id,
+                    Rooms.name,
+                    Rooms.description,
+                    Rooms.services,
                 )
                 .join(Rooms, Bookings.room_id == Rooms.id)
                 .filter(Bookings.user_id == user_id)
@@ -119,10 +142,17 @@ class BookingServices(BaseServices):
         async with async_session_maker() as session:
             query = (
                 select(
-                    Bookings.room_id, Bookings.user_id, Bookings.date_from,
-                    Bookings.date_to, Bookings.price, Bookings.total_cost,
-                    Bookings.total_days, Rooms.image_id, Rooms.name,
-                    Rooms.description, Rooms.services,
+                    Bookings.room_id,
+                    Bookings.user_id,
+                    Bookings.date_from,
+                    Bookings.date_to,
+                    Bookings.price,
+                    Bookings.total_cost,
+                    Bookings.total_days,
+                    Rooms.image_id,
+                    Rooms.name,
+                    Rooms.description,
+                    Rooms.services,
                 )
                 .join(Rooms, Bookings.room_id == Rooms.id)
                 .filter(Bookings.id == booking_id)
@@ -149,9 +179,7 @@ class BookingServices(BaseServices):
     @classmethod
     async def delete_user_bookings(cls, user_id: int):
         async with async_session_maker() as session:
-            query = (
-                delete(Bookings).filter_by(user_id=user_id)
-            ).returning(Bookings)
+            query = (delete(Bookings).filter_by(user_id=user_id)).returning(Bookings)
 
             result = await session.execute(query)
             await session.commit()

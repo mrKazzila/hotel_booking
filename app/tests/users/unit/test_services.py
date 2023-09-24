@@ -1,15 +1,15 @@
 import pytest
 
 from app.tests.users.unit.parametrize_data.services import (
-    users_find_by_id_data,
     negative_users_find_by_id_data,
+    users_find_by_id_data,
 )
 from app.users.services import UserServices
 
 
 @pytest.mark.unit
 @pytest.mark.parametrize(
-    'user_id, email',
+    ['user_id', 'email'],
     users_find_by_id_data,
 )
 async def test_users_find_by_id(user_id: int, email: str) -> None:

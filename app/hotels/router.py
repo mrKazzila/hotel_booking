@@ -9,7 +9,7 @@ from app.hotels.services import HotelServices
 
 router = APIRouter(
     prefix='/hotels',
-    tags=['Hotels']
+    tags=['Hotels'],
 )
 
 

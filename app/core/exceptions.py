@@ -2,14 +2,12 @@ from fastapi import HTTPException, status
 
 
 class UserNotFoundException(HTTPException):
-
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__(status_code=status.HTTP_401_UNAUTHORIZED)
 
 
 class UserAlreadyExistException(HTTPException):
-
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__(
             status_code=status.HTTP_409_CONFLICT,
             detail='User already exist.',
@@ -17,8 +15,7 @@ class UserAlreadyExistException(HTTPException):
 
 
 class IncorrectEmailOrPasswordException(HTTPException):
-
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail='Incorrect email or password.',
@@ -26,8 +23,7 @@ class IncorrectEmailOrPasswordException(HTTPException):
 
 
 class IncorrectTokenFormatException(HTTPException):
-
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail='Incorrect token format.',
@@ -35,8 +31,7 @@ class IncorrectTokenFormatException(HTTPException):
 
 
 class EmptyTokenException(HTTPException):
-
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail='The token is missing.',
@@ -44,8 +39,7 @@ class EmptyTokenException(HTTPException):
 
 
 class ExpireTokenException(HTTPException):
-
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail='Your token has expired.',
@@ -53,8 +47,7 @@ class ExpireTokenException(HTTPException):
 
 
 class RoomCannotBeBookedException(HTTPException):
-
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__(
             status_code=status.HTTP_409_CONFLICT,
             detail='Room can not be booked.',
@@ -62,8 +55,7 @@ class RoomCannotBeBookedException(HTTPException):
 
 
 class BookingsNotFoundException(HTTPException):
-
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__(
             status_code=status.HTTP_404_NOT_FOUND,
             detail='Bookings not found.',
@@ -71,8 +63,7 @@ class BookingsNotFoundException(HTTPException):
 
 
 class HotelNotFoundException(HTTPException):
-
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__(
             status_code=status.HTTP_404_NOT_FOUND,
             detail='Hotel not found.',
@@ -80,8 +71,7 @@ class HotelNotFoundException(HTTPException):
 
 
 class RoomsNotFoundException(HTTPException):
-
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__(
             status_code=status.HTTP_404_NOT_FOUND,
             detail='Rooms not found.',

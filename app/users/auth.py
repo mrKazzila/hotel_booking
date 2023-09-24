@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, date, timezone
+from datetime import date, datetime, timedelta, timezone
 
 from jose import jwt
 from passlib.context import CryptContext
@@ -42,7 +42,10 @@ def create_access_token(data: dict, expire_time: date) -> str:
 async def authenticate_user(email: EmailStr, password: str):
     user = await UserServices.find_one_or_none(email=email)
 
-    if user and verify_password(plain_password=password, hashed_password=user.hashed_password):
+    if user and verify_password(
+        plain_password=password,
+        hashed_password=user.hashed_password,
+    ):
         return user
 
     raise IncorrectEmailOrPasswordException

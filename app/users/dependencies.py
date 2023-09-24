@@ -1,11 +1,11 @@
 from datetime import datetime
 
 from fastapi import Depends, Request
-from jose import jwt, JWTError
+from jose import JWTError, jwt
 
 from app.core.exceptions import (
-    ExpireTokenException,
     EmptyTokenException,
+    ExpireTokenException,
     IncorrectTokenFormatException,
     UserNotFoundException,
 )

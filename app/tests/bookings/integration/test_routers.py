@@ -9,16 +9,16 @@ from app.tests.bookings.integration.parametrize_data.routers import (
 
 @pytest.mark.integration
 @pytest.mark.parametrize(
-    'room_id, date_from, date_to, book_count, status_code',
+    ['room_id', 'date_from', 'date_to', 'book_count', 'status_code'],
     add_and_get_booking_data,
 )
 async def test_add_and_get_booking(
-        room_id: int,
-        date_from: str,
-        date_to: str,
-        book_count: int,
-        status_code: int,
-        authenticated_ac: AsyncClient,
+    room_id: int,
+    date_from: str,
+    date_to: str,
+    book_count: int,
+    status_code: int,
+    authenticated_ac: AsyncClient,
 ) -> None:
     response = await authenticated_ac.post(
         '/bookings',
@@ -37,13 +37,13 @@ async def test_add_and_get_booking(
 
 @pytest.mark.integration
 @pytest.mark.parametrize(
-    'booking_id, status_code',
+    ['booking_id', 'status_code'],
     delete_user_booking_by_id_data,
 )
 async def test_delete_user_booking_by_id(
-        booking_id: int,
-        status_code: int,
-        authenticated_ac: AsyncClient,
+    booking_id: int,
+    status_code: int,
+    authenticated_ac: AsyncClient,
 ) -> None:
     response = await authenticated_ac.delete(
         '/bookings/',

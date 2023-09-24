@@ -23,5 +23,5 @@ async def add_hotel_images(name: int, file: UploadFile):
         image_process.delay(image_path)
         return JSONResponse(
             status_code=status.HTTP_201_CREATED,
-            content={'details': f'Success upload file {image_file_object.name}'}
+            content={'details': f'Success upload file {image_file_object.name}'},
         )

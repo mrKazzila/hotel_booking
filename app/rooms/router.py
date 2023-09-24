@@ -5,7 +5,7 @@ from app.rooms.services import RoomsServices
 
 router = APIRouter(
     prefix='/rooms',
-    tags=['Rooms']
+    tags=['Rooms'],
 )
 
 

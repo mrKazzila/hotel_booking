@@ -3,7 +3,12 @@ from fastapi.responses import JSONResponse
 
 from app.core.exceptions import UserAlreadyExistException
 from app.settings.config import settings
-from app.users.auth import authenticate_user, create_access_token, get_password_hash, generate_expire_time
+from app.users.auth import (
+    authenticate_user,
+    create_access_token,
+    generate_expire_time,
+    get_password_hash,
+)
 from app.users.dependencies import get_current_user
 from app.users.models import Users
 from app.users.schemas import SUserAuth
@@ -30,7 +35,10 @@ async def register_user(user_data: SUserAuth):
 
 @router.post('/login')
 async def login_user(response: Response, user_data: SUserAuth):
-    if user := await authenticate_user(email=user_data.email, password=user_data.password):
+    if user := await authenticate_user(
+        email=user_data.email,
+        password=user_data.password,
+    ):
         expire_time = generate_expire_time(minutes=settings().TOKEN_EXPIRE_MIN)
 
         access_token = create_access_token(

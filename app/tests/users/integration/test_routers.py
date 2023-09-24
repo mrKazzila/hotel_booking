@@ -1,21 +1,21 @@
 import pytest
 from httpx import AsyncClient
 
-from app.users.services import UserServices
 from app.tests.users.integration.parametrize_data.routers import register_user_data
+from app.users.services import UserServices
 
 
 @pytest.mark.integration
 @pytest.mark.parametrize(
-    'email, password, status_code, is_add_in_db',
+    ['email', 'password', 'status_code', 'is_add_in_db'],
     register_user_data,
 )
 async def test_register_user(
-        email: str,
-        password: str,
-        status_code: int,
-        is_add_in_db: bool,
-        async_client: AsyncClient,
+    email: str,
+    password: str,
+    status_code: int,
+    is_add_in_db: bool,
+    async_client: AsyncClient,
 ) -> None:
     response = await async_client.post(
         '/auth/register',

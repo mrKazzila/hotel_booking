@@ -65,21 +65,21 @@ def event_loop(request) -> BaseEventLoop:
     loop.close()
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture()
 async def async_client() -> AsyncClient:
     async with AsyncClient(app=fastapi_app, base_url='http://test') as async_client:
         yield async_client
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture()
 async def async_session() -> AsyncSession:
     async with async_session_maker() as async_session:
         yield async_session
 
 
-@pytest.fixture(scope="session")
-async def authenticated_ac():
-    async with AsyncClient(app=fastapi_app, base_url="http://test") as ac:
+@pytest.fixture(scope='session')
+async def authenticated_ac() -> AsyncClient:
+    async with AsyncClient(app=fastapi_app, base_url='http://test') as ac:
         await ac.post(
             '/auth/login',
             json={
