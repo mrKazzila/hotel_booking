@@ -52,6 +52,10 @@ extend-exclude  = '''
 [tool.ruff]
 extend = "linters/ruff.toml"
 
+[tool.isort]
+profile = "black"
+extend_skip = ["app/migrations"]
+
 [tool.pyright]
 extend = "linters/pyright.toml"
 
