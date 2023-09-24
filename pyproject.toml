@@ -31,8 +31,7 @@ pytest-asyncio = "^0.21.1"
 pytest-xdist = "^3.3.1"
 httpx = "^0.25.0"
 
-yapf = "^0.32.0"
-toml = "^0.10.2"
+black = "^23.9.1"
 ruff = "^0.0.291"
 isort = "^5.12.0"
 bandit = "^1.7.5"
@@ -42,5 +41,14 @@ pyright = "^1.1.327"
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
+[tool.black]
+extend = "linters/black.toml"
+
 [tool.ruff]
 extend = "linters/ruff.toml"
+
+[tool.pyright]
+extend = "linters/pyright.toml"
+
+[tool.bandit]
+extend = "linters/bandit.toml"
