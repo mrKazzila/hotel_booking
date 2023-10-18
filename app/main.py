@@ -1,3 +1,4 @@
+import logging
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -15,17 +16,26 @@ from app.rooms.router import router as rooms_router
 from app.settings.config import settings
 from app.settings.database import engine
 from app.settings.redis_setup import redis_setup
+from app.settings.sentry_setup import sentry_setup
 from app.users.router import router as users_router
+
+logger = logging.getLogger(__name__)
+
+ADMIN_VIEWS = (UsersAdmin, BookingsAdmin, HotelsAdmin, RoomsAdmin)
+ROUTERS = (users_router, booking_router, hotels_router, images_router, pages_router, rooms_router)
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
-    print('Service started')
+async def lifespan():
+    logger.info('Service started')
     await redis_setup()
+
     yield
-    print('Service exited')
+
+    logger.info('Service exited')
 
 
+sentry_setup()
 app = FastAPI(lifespan=lifespan)
 
 admin = Admin(
@@ -35,17 +45,11 @@ admin = Admin(
     authentication_backend=authentication_backend,
 )
 
-admin.add_view(UsersAdmin)
-admin.add_view(BookingsAdmin)
-admin.add_view(HotelsAdmin)
-admin.add_view(RoomsAdmin)
+for admin_view in ADMIN_VIEWS:
+    admin.add_view(admin_view)
 
-app.include_router(router=users_router)
-app.include_router(router=booking_router)
-app.include_router(router=hotels_router)
-app.include_router(router=rooms_router)
-app.include_router(router=pages_router)
-app.include_router(router=images_router)
+for router_ in ROUTERS:
+    app.include_router(router=router_)
 
 app.mount(
     path='/static',
