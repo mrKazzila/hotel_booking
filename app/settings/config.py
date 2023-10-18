@@ -1,10 +1,14 @@
+import logging
 from functools import lru_cache
 from pathlib import Path
 from sys import exit
-from typing import Literal
+from typing import Annotated, Literal
 
-from pydantic import PostgresDsn, UrlConstraints, ValidationError, field_validator
+from annotated_types import Ge, Le, MinLen
+from pydantic import HttpUrl, PostgresDsn, SecretStr, ValidationError
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+logger = logging.getLogger(__name__)
 
 
 class ProjectBaseSettings(BaseSettings):
@@ -14,55 +18,44 @@ class ProjectBaseSettings(BaseSettings):
         env_file=Path(__file__).resolve().parents[__ROOT_DIR_ID].joinpath('env/.env'),
     )
 
-    @classmethod
-    def _validate_port(cls, v: int) -> int:
-        MIN_PORT_NUMBER: int = 1  # noqa
-        MAX_PORT_NUMBER: int = 65_535  # noqa
-
-        if MIN_PORT_NUMBER <= v <= MAX_PORT_NUMBER:
-            return v
-        raise ValueError(
-            f'Port must be between {MIN_PORT_NUMBER} and {MAX_PORT_NUMBER}',
-        )
-
 
 class ProjectSettings(ProjectBaseSettings):
     MODE: Literal['DEV', 'TEST', 'PROD']
 
+    SENTRY_URL: HttpUrl
+    TRACES_SAMPLE_RATE: float
+    PROFILES_SAMPLE_RATE: float
+
     DOMAIN: str  # TODO: need validate
-    DOMAIN_PORT: int
+    DOMAIN_PORT: Annotated[int, Ge(1), Le(65_535)]
 
     SECRET_KEY: str
     ALGORITHM: str
-    TOKEN_EXPIRE_MIN: int  # TODO: need validate
+    TOKEN_EXPIRE_MIN: Annotated[int, Ge(30)]
 
     SMTP_HOST: str
     SMTP_PORT: int
     SMTP_USER: str
     SMTP_PASS: str
 
-    field_validator('DOMAIN_PORT', 'SMTP_PORT')(ProjectBaseSettings._validate_port)
-
 
 class DatabaseSettings(ProjectBaseSettings):
     DB_SCHEME: str
     DB_HOST: str
-    DB_PORT: int
+    DB_PORT: Annotated[int, Ge(1), Le(65_535)]
     DB_USER: str
     DB_PASS: str
     DB_NAME: str
 
     TEST_DB_SCHEME: str
     TEST_DB_HOST: str
-    TEST_DB_PORT: int
+    TEST_DB_PORT: Annotated[int, Ge(1), Le(65_535)]
     TEST_DB_USER: str
-    TEST_DB_PASS: str
+    TEST_DB_PASS: Annotated[SecretStr, MinLen(8)]
     TEST_DB_NAME: str
 
     REDIS_HOST: str
-    REDIS_PORT: int
-
-    # class Config:
+    REDIS_PORT: Annotated[int, Ge(1), Le(65_535)]
 
     @property
     def database_url(self) -> PostgresDsn:
@@ -86,19 +79,6 @@ class DatabaseSettings(ProjectBaseSettings):
             path=f'{self.TEST_DB_NAME}',
         )
 
-    field_validator('DB_PORT', 'REDIS_PORT', 'TEST_DB_PORT')(
-        ProjectBaseSettings._validate_port,
-    )
-
-    @field_validator('DB_SCHEME', 'TEST_DB_SCHEME')
-    def __validate_pg_scheme(cls, v: int) -> UrlConstraints.allowed_schemes:
-        UrlConstraints.allowed_schemes = ['postgresql+asyncpg']
-
-        if v in UrlConstraints.allowed_schemes:
-            return v
-
-        raise ValueError('Invalid PostgresDsn scheme')
-
 
 class Settings(ProjectSettings, DatabaseSettings):
     STATIC_PATH: str = 'app/static/'
@@ -109,10 +89,11 @@ class Settings(ProjectSettings, DatabaseSettings):
 
 @lru_cache
 def settings() -> Settings:
-    print('Loading settings from env')
+    logger.info('Loading settings from env')
     try:
         settings_ = Settings()
         return settings_
 
     except ValidationError as e:
+        logger.error('Error at loading settings from env. %(err)s', {'err': e})
         exit(e)
