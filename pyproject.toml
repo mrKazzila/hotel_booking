@@ -23,6 +23,8 @@ greenlet = "^2.0.2"
 
 celery = "^5.3.4"
 flower = "^2.0.1"
+python-json-logger = "^2.0.7"
+sentry-sdk = {extras = ["fastapi"], version = "^1.31.0"}
 
 
 [tool.poetry.group.dev.dependencies]
