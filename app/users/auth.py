@@ -7,6 +7,7 @@ from pydantic import EmailStr
 from app.core.exceptions import IncorrectEmailOrPasswordException
 from app.settings.config import settings
 from app.users.services import UserServices
+from app.settings.logger import logger
 
 pwd_context = CryptContext(
     schemes=['bcrypt'],
@@ -36,6 +37,8 @@ def create_access_token(data: dict, expire_time: date) -> str:
         algorithm=settings().ALGORITHM,
     )
 
+    logger.info('Access token created!')
+
     return encode_jwt
 
 
@@ -46,6 +49,7 @@ async def authenticate_user(email: EmailStr, password: str):
         plain_password=password,
         hashed_password=user.hashed_password,
     ):
+        logger.info('user authenticate', extra={'email': email})
         return user
 
     raise IncorrectEmailOrPasswordException
