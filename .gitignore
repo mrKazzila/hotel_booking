@@ -1,28 +1,27 @@
-# Byte-compiled / optimized / DLL files
+# ===== base ignore =====
+__pypackages__/
+
+
+# ===== cache data ignore =====
 __pycache__/
-
-
-# Unit test / coverage reports
-.coverage
-.coverage.*
 .cache
+.pytest_cache/
+**.ruff_cache
+
+
+# ===== test data ignore =====
+.coverage
 nosetests.xml
 coverage.xml
 *.cover
 *.py,cover
 .hypothesis/
-.pytest_cache/
 cover/
 
-# PEP 582; used by e.g. github.com/David-OConnor/pyflow and github.com/pdm-project/pdm
-__pypackages__/
 
-# Environments
-.env
+# ===== local environment ignore =====
+.idea
 .venv
-env/
-
-# PyCharm
-.idea/
-
-**.ruff_cache
+.DS_Store
+env/*
+!env/.env.example
