@@ -27,7 +27,12 @@
 
 
 ## Features
-- Lorem
+- User registration
+- User authentication using JWT token
+- Hotel room booking
+- User notification of room booking
+- Image processing with hotels
+- Admin panel for convenience
 
 
 ## Tech stack
@@ -37,16 +42,37 @@
 - [SQLAlchemy](https://www.sqlalchemy.org/)
 - [Alembic](https://pypi.org/project/alembic/)
 - [Poetry](https://python-poetry.org/docs/)
+- [Celery](https://docs.celeryq.dev/en/stable/)
+- [Redis](https://redis.io/)
+- [Sentry](https://sentry.io/)
+- [Sqladmin](https://aminalaee.dev/sqladmin/)
 
 
 ## How To Use
 <details>
 
-<summary><strong>Use Docker</strong></summary>
+<summary><strong>Local run</strong></summary>
 
 1. Firstly clone repo
    ```bash
-   git clone git@github.com:mrKazzila/shortener.git
+   git clone git@github.com:mrKazzila/hotel_booking.git
+   ```
+
+2. SetUp poetry
+   ```bash
+   poetry config virtualenvs.in-project true
+   poetry shell
+   poetry install
+   ```
+
+3. Copy env example settings to env and fill them in
+   ```bash
+   cp env/.env.example env/.env
+   ```
+
+4. Run app
+   ```bash
+   uvicorn app.main:app --reload --log-config=app/settings/logger_config.yaml  --env-file=env/.env
    ```
 
 </details>
